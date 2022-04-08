@@ -1,0 +1,10 @@
+# Python files
+__pycache__
+.ipynb_checkpoints
+
+# Intellij files
+.idea/
+.iml
+
+# Testing data files
+kit_data/
