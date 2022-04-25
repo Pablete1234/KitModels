@@ -8,3 +8,5 @@ __pycache__
 
 # Testing data files
 kit_data/
+kit_data_old/
+*.log
