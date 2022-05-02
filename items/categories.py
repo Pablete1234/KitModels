@@ -1,4 +1,3 @@
-from collections import defaultdict
 from enum import Enum
 from typing import List, Dict, Iterable, Optional
 
@@ -52,7 +51,8 @@ class Tool(EnchantmentCategory, Enum):
 
 class Weapon(EnchantmentCategory, Enum):
     SWORD = find_materials("_SWORD"), [Enchantment.DAMAGE_ALL, Enchantment.KNOCKBACK, Enchantment.FIRE_ASPECT]
-    BOW = [Material.BOW], [Enchantment.ARROW_DAMAGE, Enchantment.ARROW_KNOCKBACK, Enchantment.ARROW_FIRE, Enchantment.ARROW_INFINITE]
+    BOW = [Material.BOW], [Enchantment.ARROW_DAMAGE, Enchantment.ARROW_KNOCKBACK, Enchantment.ARROW_FIRE,
+                           Enchantment.ARROW_INFINITE]
 
     def __init__(self, materials, enchants):
         super().__init__()
@@ -68,6 +68,22 @@ class Bucket(Category, Enum):
         self.materials = materials
 
 
+# Food items, or healing items (potions/golden apples)
+class Consumable(Category, Enum):
+    SPECIAL = [Material.GOLDEN_APPLE, Material.POTION]
+    FOOD = [Material.BREAD, Material.CARROT_ITEM, Material.BAKED_POTATO, Material.POTATO_ITEM,
+            Material.POISONOUS_POTATO, Material.GOLDEN_CARROT, Material.PUMPKIN_PIE, Material.COOKIE, Material.MELON,
+            Material.MUSHROOM_SOUP, Material.RAW_CHICKEN, Material.COOKED_CHICKEN, Material.RAW_BEEF,
+            Material.COOKED_BEEF, Material.RAW_FISH, Material.COOKED_FISH, Material.PORK, Material.GRILLED_PORK,
+            Material.APPLE, Material.ROTTEN_FLESH, Material.SPIDER_EYE, Material.RABBIT,
+            Material.COOKED_RABBIT, Material.RABBIT_STEW, Material.MUTTON, Material.COOKED_MUTTON]
+
+    def __init__(self, materials):
+        super().__init__()
+        self.materials = materials
+
+
+# Generic item, blocks, etc
 class Item(Category):
     def __init__(self, material):
         super().__init__()
@@ -78,7 +94,7 @@ class Item(Category):
         return "Item." + str(self.material)
 
     def __eq__(self, other):
-        return self.material == other.material
+        return isinstance(other, Item) and self.material == other.material
 
     def __hash__(self):
         return hash(self.material)
@@ -86,15 +102,18 @@ class Item(Category):
 
 class Categories:
     CATEGORY_MAP: Dict[Material, Category] = {}
+    CATEGORY_LIST: List[Category] = []
 
     @classmethod
     def setup(cls):
         cls.__add_categories(Weapon)
         cls.__add_categories(Tool)
+        cls.__add_categories(Consumable)
         cls.__add_category(Bucket.BUCKET)
 
     @classmethod
     def __add_category(cls, category: Category):
+        cls.CATEGORY_LIST.append(category)
         for mat in category.get_all():
             cls.CATEGORY_MAP[mat] = category
 

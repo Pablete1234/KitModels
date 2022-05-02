@@ -1,6 +1,8 @@
 from typing import List
 from collections import Counter
 
+from pandas import Series
+
 
 class Inventory:
 
@@ -34,12 +36,5 @@ class Inventory:
         return result
 
     @staticmethod
-    def of(row, prefix):
-        result = [None]*36
-        for i in range(0, 36):
-            result[i] = row[prefix + str(i)]
-
-        return Inventory(result)
-
-
-
+    def of(row: Series, prefix: str) -> "Inventory":
+        return Inventory(row[(prefix + "_0"):(prefix + "_35")])
