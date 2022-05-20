@@ -1,3 +1,4 @@
+import enum
 from typing import List
 from collections import Counter
 
@@ -13,7 +14,15 @@ class Inventory:
         return "[" + ",".join([str(e) for e in self.items]) + "]"
 
     def __eq__(self, other) -> bool:
-        return self.items == other.items
+        # Pandas series has an equals method
+        if hasattr(self.items, "equals") and callable(self.items.equals):
+            return self.items.equals(other.items)
+
+        res = self.items == other.items
+        # Numpy requires .all call, otherwise self.items == other.items actually returns a collection.
+        if hasattr(res, "all") and callable(res.all):
+            res = res.all()
+        return res
 
     def __hash__(self) -> int:
         result: int = 1
@@ -21,6 +30,20 @@ class Inventory:
             result = 31 * result + hash(item)
 
         return result
+
+    def __iter__(self):
+        return iter(self.items)
+
+    def __contains__(self, item):
+        if issubclass(item, enum.Enum):
+            for it in self.items:
+                if isinstance(it, item):
+                    return True
+        else:
+            for it in self.items:
+                if it == item:
+                    return True
+        return False
 
     def apply(self, fn):
         return Inventory([fn(item) for item in self.items])

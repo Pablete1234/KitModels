@@ -83,6 +83,14 @@ class Consumable(Category, Enum):
         self.materials = materials
 
 
+class Block(Category, Enum):
+    BLOCK = [m for m in list(Material) if 0 < m.value < 256]
+
+    def __init__(self, materials):
+        super().__init__()
+        self.materials = materials
+
+
 # Generic item, blocks, etc
 class Item(Category):
     def __init__(self, material):
@@ -109,7 +117,8 @@ class Categories:
         cls.__add_categories(Weapon)
         cls.__add_categories(Tool)
         cls.__add_categories(Consumable)
-        cls.__add_category(Bucket.BUCKET)
+        cls.__add_categories(Block)
+        cls.__add_categories(Bucket)
 
     @classmethod
     def __add_category(cls, category: Category):
