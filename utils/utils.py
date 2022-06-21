@@ -38,37 +38,37 @@ def row_count(file: str) -> int:
     return pq.read_table(file, columns=[]).num_rows
 
 
-def split_datasets(sizes: List[int] = None, source: str = "all", prefix: str = "min_", dry_run: bool = None) -> List[int]:
+def split_datasets(sizes: List[int] = None, source: str = "kit_data/all", dest: str = "kit_data/min_", dry_run: bool = None) -> List[int]:
     """
     Split dataset into folders for players with at least n kit preferences saved
     :param sizes: list of sizes
     :param source: source dataset
-    :param prefix: dataset prefix to use
+    :param dest: dataset prefix to use
     :param dry_run: True to ignore copying files, useful to just get a count of kit sizes
     :return: a list with the sizes for all the kits
     """
     if sizes is None:
         sizes = [10, 50, 100]
     if dry_run is None:
-        dry_run = all([os.path.isdir("kit_data/" + prefix + str(s) + "/") for s in sizes])
+        dry_run = all([os.path.isdir(dest + str(s) + "/") for s in sizes])
 
     result = []
 
     if not dry_run:
         for s in sizes:
-            path = "kit_data/" + prefix + str(s) + "/"
+            path = dest + str(s) + "/"
             if os.path.isdir(path):
                 shutil.rmtree(path)
             os.mkdir(path)
 
-    for user in os.listdir("kit_data/" + source):
-        rows = row_count("kit_data/" + source + "/" + user)
+    for user in os.listdir(source):
+        rows = row_count(source + "/" + user)
         result.append(rows)
         if dry_run:
             continue
         for s in sizes:
             if rows >= s:
-                shutil.copy("kit_data/" + source + "/" + user, "kit_data/" + prefix + str(s) + "/" + user)
+                shutil.copy(source + "/" + user, dest + str(s) + "/" + user)
 
     return result
 
@@ -81,7 +81,7 @@ T = TypeVar("T")
 
 
 # Count-up all separate "kit types" in the dataset
-def count_kits(ds: str = "min_10", to_kit: Callable[[Series], T] = as_kit_type) -> Counter[T]:
+def count_kits(ds: str = "kit_data/min_10", to_kit: Callable[[Series], T] = as_kit_type) -> Counter[T]:
     lock = threading.Lock()
     result = Counter[T]()
 
@@ -93,11 +93,11 @@ def count_kits(ds: str = "min_10", to_kit: Callable[[Series], T] = as_kit_type) 
             result[inv] += 1
             lock.release()
 
-    files = os.listdir("kit_data/" + ds)
+    files = os.listdir(ds)
     with ThreadPoolExecutor(max_workers=32) as executor:
         lock = threading.Lock()
         for player_file in files:
-            executor.submit(handle_player, "kit_data/" + ds + "/" + player_file)
+            executor.submit(handle_player, ds + "/" + player_file)
 
     return result
 
@@ -108,8 +108,8 @@ def print_kit_counter(kit_counter: Counter[object]):
 
 
 # Display visually original kit and preference kit in a table
-def display_changes(pl_file):
-    df = read_file("kit_data/all/" + pl_file, only_category=True)
+def display_changes(pl_file, ds: str = "kit_data/all"):
+    df = read_file(ds + "/" + pl_file, only_category=True)
     arr = np.empty(shape=(df.shape[0] * 2, 37), dtype=object)
 
     kit_start = df.columns.get_loc("kit_0")

@@ -30,12 +30,12 @@ def compute_diff(_kit: Iterable, _sort: Iterable) -> (float, float):
     return _kit_diff, _bar_diff
 
 
-def check_differences(ds: str = "min_10"):
-    pl_files = os.listdir("kit_data/" + ds)
+def check_differences(ds: str = "kit_data/min_10"):
+    pl_files = os.listdir(ds)
     results = np.zeros(shape=(len(pl_files), 4))
 
     for idx, user in enumerate(pl_files):
-        df = read_file("kit_data/" + ds + "/" + user, convert_items=True)
+        df = read_file(ds + "/" + user, convert_items=True)
 
         for _idx, _row in df.iterrows():
             kit = _row["kit_0":"kit_35"]
@@ -106,7 +106,7 @@ def show_scatter_hists(ds, whole=False, bar=True):
 
 
 def compute_kit_modifications(ds) -> Dict[Inventory, Tuple[float, float, float, float, float]]:
-    pl_files = os.listdir("kit_data/" + ds)
+    pl_files = os.listdir(ds)
 
     # total_cnt: total count, overall amount of times the kit was given
     # total_pl_cnt: total player count who received this kit
@@ -116,7 +116,7 @@ def compute_kit_modifications(ds) -> Dict[Inventory, Tuple[float, float, float, 
     results: Dict[Inventory, Tuple[float, float, float, float, float]] = defaultdict(lambda: (0, 0, 0, 0, 0))
 
     for idx, user in enumerate(pl_files):
-        df = read_file("kit_data/" + ds + "/" + user, convert_items=True, only_category=True)
+        df = read_file(ds + "/" + user, convert_items=True, only_category=True)
 
         user_results: Dict[Inventory, Tuple[float, float, float]] = defaultdict(lambda: (0, 0, 0))
 

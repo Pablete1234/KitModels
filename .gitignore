@@ -9,4 +9,6 @@ __pycache__
 # Testing data files
 kit_data/
 kit_data_old/
+kit_results_old/
+kit_results/
 *.log

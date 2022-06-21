@@ -81,7 +81,8 @@ class NaiveBayesPredictor1(KitPredictor):
 
     def __init__(self) -> None:
         super().__init__()
-        self.chances: Dict[Category, NDArray[Shape["9"], Float]] = defaultdict(lambda: np.zeros(shape=9, dtype=float))
+        self.chances: Dict[Category, NDArray[Shape["9"], Float]] = \
+            defaultdict(lambda: np.zeros(shape=9, dtype=float))
 
     def ignore_kit(self, kit: Inventory):
         return not (Weapon in kit or Tool in kit)
@@ -105,7 +106,8 @@ class NaiveBayesPredictor2(KitPredictor):
 
     def __init__(self) -> None:
         super().__init__()
-        self.chances: Dict[Category, NDArray[Shape["2,9"], Float]] = defaultdict(lambda: np.zeros(shape=(2, 9), dtype=float))
+        self.chances: Dict[Category, NDArray[Shape["2,9"], Float]] = \
+            defaultdict(lambda: np.zeros(shape=(2, 9), dtype=float))
 
     def ignore_kit(self, kit: Inventory):
         return not (Weapon in kit or Tool in kit)
@@ -130,7 +132,8 @@ class NaiveBayesPredictor3(KitPredictor):
 
     def __init__(self) -> None:
         super().__init__()
-        self.chances: Dict[Category, NDArray[Shape["10,9"], Float]] = defaultdict(lambda: np.zeros(shape=(10, 9), dtype=float))
+        self.chances: Dict[Category, NDArray[Shape["10,9"], Float]] = \
+            defaultdict(lambda: np.zeros(shape=(10, 9), dtype=float))
 
     def ignore_kit(self, kit: Inventory):
         return not (Weapon in kit or Tool in kit)
